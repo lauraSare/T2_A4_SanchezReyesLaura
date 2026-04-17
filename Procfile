@@ -1,0 +1,1 @@
+web: gunicorn Servicios_Escolares.wsgi --log-file -

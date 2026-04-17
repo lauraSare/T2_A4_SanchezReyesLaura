@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-$lb8j3swtry7y9da-(^j)i-!@vl1@vkb-)n^oa89vh=*@pgx@a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -73,27 +74,38 @@ WSGI_APPLICATION = 'Servicios_Escolares.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-DATABASES = {
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }, 
-    'default' : {
-        'ENGINE' : 'django.db.backends.mysql', 
-        'NAME' : 'BD_Django_2026', 
-        'USER' : 'laura', 
-        'PASSWORD' : 'laura',
-        'HOST' : 'localhost', 
-        'PORT' : '3306'
-    }    
-}
+#  Railway 
+if os.environ.get('MYSQLHOST'):
+    # Base de datos Railway
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('MYSQLDATABASE', 'railway'),
+            'USER': os.environ.get('MYSQLUSER', 'root'),
+            'PASSWORD': os.environ.get('MYSQLPASSWORD', ''),
+            'HOST': os.environ.get('MYSQLHOST', 'localhost'),
+            'PORT': os.environ.get('MYSQLPORT', '3306'),
+        }
+    }
+else:
+    # Base de datos local (profe puede ver esto)
+    DATABASES = {
+        'sqlite': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }, 
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', 
+            'NAME': 'BD_Django_2026', 
+            'USER': 'laura', 
+            'PASSWORD': 'laura',
+            'HOST': 'localhost', 
+            'PORT': '3306'
+        }    
+    }
 
 
 # Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -111,8 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -122,10 +132,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
+# Static files
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Redirecciones de Login
 LOGIN_URL = '/login/'
