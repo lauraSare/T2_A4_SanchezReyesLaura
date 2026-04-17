@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login - Servicios Escolares</title>
+
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% load static %}
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+
+            <!-- FORMULARIO LOGIN -->
+            <div class="col-md-5" id="seccion-login">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white text-center">
+                        <h4>SERVICIOS ESCOLARES</h4>
+                        <small>Inicia sesión para continuar</small>
+                    </div>
+                    <div class="card-body">
+
+                        {% if form.errors and not mostrar_registro %}
+                        <div class="alert alert-danger">
+                            Usuario o contraseña incorrectos.
+                        </div>
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label>Usuario:</label>
+                                <input type="text" name="username" class="form-control" autofocus required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Contraseña:</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100">Entrar</button>
+                        </form>
+
+                        <hr>
+                        <p class="text-center mb-0">¿No tienes cuenta?
+                            <a href="#" onclick="mostrarRegistro()">Regístrate aquí</a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORMULARIO REGISTRO (oculto por defecto) -->
+            <div class="col-md-5" id="seccion-registro" style="display:none;">
+                <div class="card shadow">
+                    <div class="card-header bg-secondary text-white text-center">
+                        <h4>CREAR CUENTA</h4>
+                        <small>Regístrate para acceder al sistema</small>
+                    </div>
+                    <div class="card-body">
+
+                        <form method="POST" action="{% url 'registro' %}">
+                            {% csrf_token %}
+
+                            {% if form.errors and mostrar_registro %}
+                            <div class="alert alert-danger">
+                                {% for field in form %}
+                                {% for error in field.errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label>Usuario:</label>
+                                <input type="text" name="username" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Contraseña:</label>
+                                <input type="password" name="password1" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Confirmar Contraseña:</label>
+                                <input type="password" name="password2" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-secondary w-100">Crear Cuenta</button>
+                        </form>
+
+                        <hr>
+                        <p class="text-center mb-0">¿Ya tienes cuenta?
+                            <a href="#" onclick="mostrarLogin()">Inicia sesión aquí</a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        {%if mostrar_registro %}
+        document.addEventListener('DOMContentLoaded', mostrarRegistro);
+        {% endif %}
+
+        function mostrarRegistro() {
+            document.getElementById('seccion-login').style.display = 'none';
+            document.getElementById('seccion-registro').style.display = 'block';
+        }
+
+        function mostrarLogin() {
+            document.getElementById('seccion-registro').style.display = 'none';
+            document.getElementById('seccion-login').style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>
